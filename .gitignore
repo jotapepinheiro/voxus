@@ -1,0 +1,11 @@
+/.env
+/.idea
+/.DS_Store
+/.phpunit.result.cache
+/vendor/
+composer.lock
+/docker/logs/
+/composer.lock
+/package-lock.json
+docker/data/
+docker/logs/
