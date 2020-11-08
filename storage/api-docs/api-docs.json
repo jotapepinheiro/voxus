@@ -1,0 +1,2048 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API - Voxus Location",
+        "description": "Documentação do Projeto Voxus Location",
+        "contact": {
+            "name": "João Paulo Pinheiro",
+            "email": "joaopinheiro.ti@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://voxus.local/api/v1",
+            "description": "Ambiente de Desenvolvimento"
+        },
+        {
+            "url": "http://voxus.prod/api/v1",
+            "description": "Ambiente de Produção"
+        }
+    ],
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Logar no sistema JWT por meio de e-mail e senha.",
+                "operationId": "App\\Http\\Controllers\\AuthController::login",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "E-mail",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "super@super.com"
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "Senha",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "super"
+                    },
+                    {
+                        "name": "remember",
+                        "in": "query",
+                        "description": "Lembre-me",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "example": "true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Normal Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/LoginProperty"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Retorna os dados do usuário logado.",
+                "operationId": "App\\Http\\Controllers\\AuthController::me",
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/MeResponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/payoad": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Retorna dados de payload JWT.",
+                "operationId": "App\\Http\\Controllers\\AuthController::payoad",
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PayloadResponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Desconecte o usuário (invalide o token).",
+                "operationId": "App\\Http\\Controllers\\AuthController::logout",
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/locations": {
+            "get": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Lista de Localizações.",
+                "operationId": "App\\Http\\Controllers\\LocationController::index",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Incluir Usuários, users",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[ip]",
+                        "in": "query",
+                        "description": "Filtrar por IP",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[latitude]",
+                        "in": "query",
+                        "description": "Filtrar por latitude",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[longitude]",
+                        "in": "query",
+                        "description": "Filtrar por longitude",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[cidade]",
+                        "in": "query",
+                        "description": "Filtrar por cidade",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[estado]",
+                        "in": "query",
+                        "description": "Filtrar por estado",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[users.name]",
+                        "in": "query",
+                        "description": "Filtrar por nome de usuário",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[users.email]",
+                        "in": "query",
+                        "description": "Filtrar por e-mail de usuário",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/LocationsPaginateResponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Criar nova Localização e Vincular a um Usuário.",
+                "operationId": "App\\Http\\Controllers\\LocationController::store",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "ID do Usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ip",
+                                    "latitude",
+                                    "longitude"
+                                ],
+                                "properties": {
+                                    "ip": {
+                                        "description": "IP",
+                                        "type": "string"
+                                    },
+                                    "latitude": {
+                                        "description": "Latitude",
+                                        "type": "string"
+                                    },
+                                    "longitude": {
+                                        "description": "Longitude",
+                                        "type": "string"
+                                    },
+                                    "cidade": {
+                                        "description": "Cidade",
+                                        "type": "string"
+                                    },
+                                    "estado": {
+                                        "description": "Estado",
+                                        "type": "string"
+                                    },
+                                    "time_zone": {
+                                        "description": "Fuso Horário",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/locations/{id}": {
+            "get": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Listar as Localizações por ID de Usuário.",
+                "operationId": "App\\Http\\Controllers\\LocationController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do Usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/LocationProperty"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Deletar Localização por ID.",
+                "operationId": "App\\Http\\Controllers\\LocationController::destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id da Localização",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/permissions": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Lista de permissões.",
+                "operationId": "App\\Http\\Controllers\\PermissionController::index",
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PermissionsPaginateResponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Criar nova permissão.",
+                "operationId": "App\\Http\\Controllers\\PermissionController::store",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "display_name",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Nome da Permissão",
+                                        "type": "string"
+                                    },
+                                    "display_name": {
+                                        "description": "Nome de Exibição",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "Descrição",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/permissions/{id}": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Listar permissão por ID.",
+                "operationId": "App\\Http\\Controllers\\PermissionController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id da Permissão",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PermissionProperty"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Atualizar permissão.",
+                "operationId": "App\\Http\\Controllers\\PermissionController::update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id da Permissão",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "display_name",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "display_name": {
+                                        "description": "Nome de Exibição",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "Descrição",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Deletar permissão.",
+                "operationId": "App\\Http\\Controllers\\PermissionController::destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id da Permissão",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/roles": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Lista de perfis.",
+                "operationId": "App\\Http\\Controllers\\RoleController::index",
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/RolesPaginateResponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Criar novo perfil.",
+                "operationId": "App\\Http\\Controllers\\RoleController::store",
+                "parameters": [
+                    {
+                        "name": "permissions[]",
+                        "in": "query",
+                        "description": "Permissões do Perfil",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "display_name",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Nome do Perfil",
+                                        "type": "string"
+                                    },
+                                    "display_name": {
+                                        "description": "Nome de Exibição",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "Descrição",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/roles/{id}": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Listar perfil por ID.",
+                "operationId": "App\\Http\\Controllers\\RoleController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do Perfil",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/RoleProperty"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Atualizar perfil.",
+                "operationId": "App\\Http\\Controllers\\RoleController::update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do Perfil",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "permissions[]",
+                        "in": "query",
+                        "description": "Permissões do Perfil",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "display_name",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "display_name": {
+                                        "description": "Nome de Exibição",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "Descrição",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Deletar perfil e permissões em cascata.",
+                "operationId": "App\\Http\\Controllers\\RoleController::destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do Perfil",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Lista de usuários.",
+                "operationId": "App\\Http\\Controllers\\UserController::index",
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/UsersPaginateResponse"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Cadastrar usuário.",
+                "operationId": "App\\Http\\Controllers\\UserController::store",
+                "parameters": [
+                    {
+                        "name": "roles[]",
+                        "in": "query",
+                        "description": "Perfis do Usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Nome",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "description": "E-mail",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "Senha",
+                                        "type": "string"
+                                    },
+                                    "password_confirmation": {
+                                        "description": "Confirmar Senha",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Registrar uma nova conta no sistema.",
+                "operationId": "App\\Http\\Controllers\\UserController::register",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Nome",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "description": "E-mail",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "Senha",
+                                        "type": "string"
+                                    },
+                                    "password_confirmation": {
+                                        "description": "Confirmar Senha",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Listar usuário por ID.",
+                "operationId": "App\\Http\\Controllers\\UserController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do Usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/UserProperty"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Atualizar usuário.",
+                "operationId": "App\\Http\\Controllers\\UserController::update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do Usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "roles[]",
+                        "in": "query",
+                        "description": "Perfis do Usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Nome do Usuário",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "description": "E-mail do Usuário",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Deletar usuário.",
+                "operationId": "App\\Http\\Controllers\\UserController::destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do Usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resposta Operacional Normal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão de acesso"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ApiResponse": {
+                "title": "Retorno padrão",
+                "description": "Entidade de resposta, resultado da resposta usa essa estrutura uniformemente",
+                "properties": {
+                    "success": {
+                        "description": "Status da resposta",
+                        "type": "boolean"
+                    },
+                    "code": {
+                        "description": "Código da resposta",
+                        "type": "integer"
+                    },
+                    "message": {
+                        "description": "Mensagem da resposta",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ExpirePayloadProperty": {
+                "title": "Auth Payload Expire",
+                "description": "Datas Payload de Usuário",
+                "properties": {
+                    "emitido_em": {
+                        "description": "emitido_em",
+                        "type": "string"
+                    },
+                    "expira_em": {
+                        "description": "expira_em",
+                        "type": "string"
+                    },
+                    "nao_antes_de": {
+                        "description": "nao_antes_de",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "LoginProperty": {
+                "title": "Auth Login",
+                "description": "Response JWT",
+                "properties": {
+                    "access_token": {
+                        "description": "access_token",
+                        "type": "string"
+                    },
+                    "token_type": {
+                        "description": "token_type",
+                        "type": "string"
+                    },
+                    "expires_in_minutes": {
+                        "description": "expires_in_minutes",
+                        "type": "integer"
+                    },
+                    "expires_in_date": {
+                        "description": "expires_in_date",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "MeResponse": {
+                "title": "Auth Me",
+                "description": "Retorn dados do usuário",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "name",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "email",
+                        "type": "string"
+                    },
+                    "email_verified_at": {
+                        "description": "email_verified_at",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "created_at",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "updated_at",
+                        "type": "string"
+                    },
+                    "rules": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RoleWithPermissionsProperty"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "PayloadProperty": {
+                "title": "Auth Payload Property",
+                "description": "Property Payload de Usuário",
+                "properties": {
+                    "iss": {
+                        "description": "iss",
+                        "type": "string"
+                    },
+                    "iat": {
+                        "description": "iat",
+                        "type": "integer"
+                    },
+                    "exp": {
+                        "description": "exp",
+                        "type": "integer"
+                    },
+                    "nbf": {
+                        "description": "nbf",
+                        "type": "integer"
+                    },
+                    "jti": {
+                        "description": "jti",
+                        "type": "string"
+                    },
+                    "sub": {
+                        "description": "sub",
+                        "type": "integer"
+                    },
+                    "prv": {
+                        "description": "prv",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "email",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "PayloadResponse": {
+                "title": "Auth Payload",
+                "description": "Response Payload de Usuário",
+                "properties": {
+                    "payload": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PayloadProperty"
+                        }
+                    },
+                    "datas": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExpirePayloadProperty"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "LocationProperty": {
+                "title": "Localizações",
+                "description": "Localizações",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "ip": {
+                        "description": "ip",
+                        "type": "string"
+                    },
+                    "latitude": {
+                        "description": "latitude",
+                        "type": "string"
+                    },
+                    "longitude": {
+                        "description": "longitude",
+                        "type": "string"
+                    },
+                    "cidade": {
+                        "description": "cidade",
+                        "type": "string"
+                    },
+                    "estado": {
+                        "description": "estado",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "created_at",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "updated_at",
+                        "type": "string"
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserProperty"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "LocationsPaginateResponse": {
+                "title": "Localizações Paginate",
+                "description": "Lista de Localizações com Paginação",
+                "properties": {
+                    "current_page": {
+                        "description": "current_page",
+                        "type": "integer"
+                    },
+                    "first_page_url": {
+                        "description": "first_page_url",
+                        "type": "string"
+                    },
+                    "from": {
+                        "description": "from",
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "description": "last_page",
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "description": "last_page_url",
+                        "type": "string"
+                    },
+                    "next_page_url": {
+                        "description": "next_page_url",
+                        "type": "string"
+                    },
+                    "path": {
+                        "description": "path",
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "description": "per_page",
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "description": "prev_page_url",
+                        "type": "string"
+                    },
+                    "to": {
+                        "description": "to",
+                        "type": "integer"
+                    },
+                    "total": {
+                        "description": "total",
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LocationProperty"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "PermissionProperty": {
+                "title": "Auth Permissions",
+                "description": "Permissões de Usuário",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "name",
+                        "type": "string"
+                    },
+                    "display_name": {
+                        "description": "display name",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "description",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "created_at",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "updated_at",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "PermissionsPaginateResponse": {
+                "title": "Permissions Paginate",
+                "description": "Lista de Permissões com Paginação",
+                "properties": {
+                    "current_page": {
+                        "description": "current_page",
+                        "type": "integer"
+                    },
+                    "first_page_url": {
+                        "description": "first_page_url",
+                        "type": "string"
+                    },
+                    "from": {
+                        "description": "from",
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "description": "last_page",
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "description": "last_page_url",
+                        "type": "string"
+                    },
+                    "next_page_url": {
+                        "description": "next_page_url",
+                        "type": "string"
+                    },
+                    "path": {
+                        "description": "path",
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "description": "per_page",
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "description": "prev_page_url",
+                        "type": "string"
+                    },
+                    "to": {
+                        "description": "to",
+                        "type": "integer"
+                    },
+                    "total": {
+                        "description": "total",
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PermissionProperty"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "RoleProperty": {
+                "title": "Auth Roles",
+                "description": "Perfil de Usuário",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "name",
+                        "type": "string"
+                    },
+                    "display_name": {
+                        "description": "display name",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "description",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "created_at",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "updated_at",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "RoleWithPermissionsProperty": {
+                "title": "Auth Roles/Permissions",
+                "description": "Perfil de Usuário e Permissões",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "name",
+                        "type": "string"
+                    },
+                    "display_name": {
+                        "description": "display name",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "description",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "created_at",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "updated_at",
+                        "type": "string"
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PermissionProperty"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "RolesPaginateResponse": {
+                "title": "Roles Paginate",
+                "description": "Lista de Perfis com Paginação",
+                "properties": {
+                    "current_page": {
+                        "description": "current_page",
+                        "type": "integer"
+                    },
+                    "first_page_url": {
+                        "description": "first_page_url",
+                        "type": "string"
+                    },
+                    "from": {
+                        "description": "from",
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "description": "last_page",
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "description": "last_page_url",
+                        "type": "string"
+                    },
+                    "next_page_url": {
+                        "description": "next_page_url",
+                        "type": "string"
+                    },
+                    "path": {
+                        "description": "path",
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "description": "per_page",
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "description": "prev_page_url",
+                        "type": "string"
+                    },
+                    "to": {
+                        "description": "to",
+                        "type": "integer"
+                    },
+                    "total": {
+                        "description": "total",
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RoleProperty"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UserProperty": {
+                "title": "User",
+                "description": "Usuário",
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "name",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "email",
+                        "type": "string"
+                    },
+                    "email_verified_at": {
+                        "description": "email_verified_at",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "created_at",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "description": "updated_at",
+                        "type": "string"
+                    },
+                    "rules": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RoleProperty"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UsersPaginateResponse": {
+                "title": "Users Paginate",
+                "description": "Lista de Usuários com Paginação",
+                "properties": {
+                    "current_page": {
+                        "description": "current_page",
+                        "type": "integer"
+                    },
+                    "first_page_url": {
+                        "description": "first_page_url",
+                        "type": "string"
+                    },
+                    "from": {
+                        "description": "from",
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "description": "last_page",
+                        "type": "integer"
+                    },
+                    "last_page_url": {
+                        "description": "last_page_url",
+                        "type": "string"
+                    },
+                    "next_page_url": {
+                        "description": "next_page_url",
+                        "type": "string"
+                    },
+                    "path": {
+                        "description": "path",
+                        "type": "string"
+                    },
+                    "per_page": {
+                        "description": "per_page",
+                        "type": "integer"
+                    },
+                    "prev_page_url": {
+                        "description": "prev_page_url",
+                        "type": "string"
+                    },
+                    "to": {
+                        "description": "to",
+                        "type": "integer"
+                    },
+                    "total": {
+                        "description": "total",
+                        "type": "integer"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserProperty"
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "apiAuth": {
+                "type": "http",
+                "description": "Informe o token JWT para endpoits seguros",
+                "name": "JWT bearer",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Login",
+            "description": "Atenticar com JWT",
+            "externalDocs": {
+                "description": "JWT",
+                "url": "https://github.com/tymondesigns/jwt-auth"
+            }
+        },
+        {
+            "name": "Auth",
+            "description": "Meus Dados"
+        },
+        {
+            "name": "Users",
+            "description": "Manter Usuários"
+        },
+        {
+            "name": "Roles",
+            "description": "Manter Perfis de Usuários"
+        },
+        {
+            "name": "Permissions",
+            "description": "Manter Permissões de Usuários"
+        },
+        {
+            "name": "Locations",
+            "description": "Manter Localizações"
+        }
+    ]
+}
