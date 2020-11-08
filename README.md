@@ -20,6 +20,7 @@ Produção        | 1.0   | [link][l-Producao]
 4. [Swagger][l-Swagger] API REST.
 5. Testes Unitários.
 6. [Docker][l-Docker].
+7. [ipdata][l-Ipdata] - IP Geolocation and Proxy Detection API
 
 ---
 
@@ -34,9 +35,10 @@ Produção        | 1.0   | [link][l-Producao]
 ## O que é necessário para configurar
 
 1. PHP >= 7.2 com requisitos de extensão, conforme descrito na documentação do [Lumen][l-Lumen].
-3. [Composer][l-Composer] em uma Versão estável.
-4. Qualquer banco de dados de sua escolha, eu usei o MySQL.
-
+2. [Composer][l-Composer] em uma Versão estável.
+3. Qualquer banco de dados de sua escolha, eu usei o MySQL.
+4. Criar uma conta em [Mapbox][l-Mapbox], gerar uma chave api e adicionar no arquivo mapa.blade.php(mapboxgl.accessToken)
+5. Criar uma conta em [ipdata][l-Ipdata], gerar uma chave api e adicionar no arquivo .env(IPDATA_API_KEY)
 ---
 
 ## Como instalar
@@ -47,7 +49,7 @@ Produção        | 1.0   | [link][l-Producao]
 # Instalar todos os pacotes necessários para executar o projeto
 > composer install
 
-** Caso tenha falha de memória do php local, use: **
+** Caso tenha falha de memória com php local, use: **
 > COMPOSER_MEMORY_LIMIT=-1 composer install
 
 # Crie o arquivo .env e defina o seu APP_TIMEZONE e banco de dados.
@@ -241,6 +243,7 @@ JWT_TTL e JWT_TTL_REMEMBER_ME
 [l-Swagger]: https://swagger.io
 [l-JWT]: https://jwt.io
 [l-Docker]: https://www.docker.com
+[l-Ipdata]: https://ipdata.co
 
 [l-Swagger-Doc]: http://voxus.local/api/documentation
 [l-Desenvolvimento]: http://voxus.local
